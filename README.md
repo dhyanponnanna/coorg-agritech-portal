@@ -35,4 +35,4 @@ APIs
 Open-Meteo (weather)
 Optional IMD datasets (historical analysis)
 
-Current status ("🚧Under Development")
+Current status ("Under Development")
