@@ -10,6 +10,11 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 
+
+import routes from "./routes/index.js";
+
+app.use("/api/v1", routes);
+
 app.get("/", (req, res) => {
     res.json({
         message: "Coorg Agri-Tech API is running succesfully"
