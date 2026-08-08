@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import routes from "./routes/index.js";
+import healthRoutes from "./routes/health.routes.js";
 
 const app = express();
 
@@ -18,5 +19,7 @@ app.get("/", (req, res) => {
         message: "Coorg Agri-Tech API is running succesfully"
     });
 });
+
+app.use("/api/v1/health", healthRoutes);
 
 export default app;
