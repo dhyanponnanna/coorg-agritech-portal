@@ -5,3 +5,4 @@
 - Initialized React frontend
 - Configured Express backend
 - Created project structure
+- created the database and the schema using Prisma
