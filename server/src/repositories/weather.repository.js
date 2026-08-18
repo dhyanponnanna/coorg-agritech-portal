@@ -6,15 +6,21 @@ export const createWeatherSnapshot = async (weather) => {
   });
 };
 
-export const getRecentWeatherSnapshots = async (location, limit = 24) => {
+export const getWeatherHistory = async (location, hours = 24) => {
+  const startTime = new Date(
+    Date.now() - hours * 60 * 60 * 1000
+  );
+
   return prisma.weatherSnapshot.findMany({
     where: {
       location,
+      recordedAt: {
+        gte: startTime,
+      },
     },
     orderBy: {
-      recordedAt: "desc",
+      recordedAt: "asc",
     },
-    take: limit,
   });
 };
 

@@ -4,7 +4,9 @@ import { getWeatherDescription } from "../utils/weather-code.js";
 import {
   createWeatherSnapshot,
   getLatestWeatherSnapshot,
+  getWeatherHistory,
 } from "../repositories/weather.repository.js";
+import { reverseGeocode } from "./geocoding.service.js";
 
 const OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast";
 
@@ -177,4 +179,120 @@ export const getWeatherForecast = async (location) => {
     daily: data.daily,
     units: data.daily_units,
   };
+};
+
+export const getHistoricalWeather = async (
+  location,
+  hours = 24
+) => {
+  const locationKey = location.toLowerCase();
+
+  const selectedLocation = LOCATIONS[locationKey];
+
+  if (!selectedLocation) {
+    const error = new Error("Location not supported");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const validHours = Number(hours);
+
+  if (
+    !Number.isInteger(validHours) ||
+    validHours < 1 ||
+    validHours > 168
+  ) {
+    const error = new Error(
+      "Hours must be an integer between 1 and 168"
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+
+  return getWeatherHistory(
+    selectedLocation.name,
+    validHours
+  );
+};
+
+export const getCurrentWeatherByCoordinates = async (
+  latitude,
+  longitude
+) => {
+  const lat = Number(latitude);
+  const lon = Number(longitude);
+
+  if (
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lon) ||
+    lat < -90 ||
+    lat > 90 ||
+    lon < -180 ||
+    lon > 180
+  ) {
+    const error = new Error("Invalid latitude or longitude");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const params = new URLSearchParams({
+    latitude: lat.toString(),
+    longitude: lon.toString(),
+    current: [
+      "temperature_2m",
+      "relative_humidity_2m",
+      "apparent_temperature",
+      "precipitation",
+      "rain",
+      "weather_code",
+      "wind_speed_10m",
+      "wind_direction_10m",
+    ].join(","),
+    timezone: "auto",
+    temperature_unit: "celsius",
+    wind_speed_unit: "kmh",
+    precipitation_unit: "mm",
+  });
+
+  const response = await fetch(`${OPEN_METEO_URL}?${params}`);
+
+  if (!response.ok) {
+    const error = new Error("Weather provider request failed");
+    error.statusCode = 502;
+    throw error;
+  }
+  
+  let location = null;
+
+  try {
+    location = await reverseGeocode(lat, lon);
+  } catch (error) {
+    console.error(
+      "Reverse geocoding failed:",
+      error.message
+    );
+  }
+
+  const data = await response.json();
+
+  const agriculturalAnalysis = analyzeCurrentConditions({
+    temperature: data.current.temperature_2m,
+    humidity: data.current.relative_humidity_2m,
+    precipitation: data.current.precipitation,
+    rain: data.current.rain,
+  });
+
+  return {
+  location,
+  coordinates: {
+    latitude: lat,
+    longitude: lon,
+  },
+  current: data.current,
+  units: data.current_units,
+  weatherDescription: getWeatherDescription(
+    data.current.weather_code
+  ),
+  agriculturalAnalysis,
+};
 };
