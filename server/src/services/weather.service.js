@@ -1,4 +1,6 @@
 import { LOCATIONS } from "../config/locations.js";
+import { analyzeCurrentConditions } from "./agriculture.service.js";
+import { getWeatherDescription } from "../utils/weather-code.js";
 
 const OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast";
 
@@ -42,15 +44,25 @@ export const getCurrentWeather = async (location) => {
 
   const data = await response.json();
 
-  return {
-    location: selectedLocation.name,
-    coordinates: {
-      latitude: selectedLocation.latitude,
-      longitude: selectedLocation.longitude,
-    },
-    current: data.current,
-    units: data.current_units,
-  };
+ const agriculturalAnalysis = analyzeCurrentConditions({
+  temperature: data.current.temperature_2m,
+  humidity: data.current.relative_humidity_2m,
+  precipitation: data.current.precipitation,
+  rain: data.current.rain,
+ });
+
+ return {
+  location: selectedLocation.name,
+  coordinates: {
+    latitude: selectedLocation.latitude,
+    longitude: selectedLocation.longitude,
+  },
+  current: data.current,
+  units: data.current_units,
+  weatherDescription: getWeatherDescription(
+  data.current.weather_code),
+  agriculturalAnalysis,
+ };
 };
 
 export const getWeatherForecast = async (location) => {
