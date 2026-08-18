@@ -5,6 +5,7 @@ import {
   createWeatherSnapshot,
   getLatestWeatherSnapshot,
   getWeatherHistory,
+  getLocationByName,
 } from "../repositories/weather.repository.js";
 import { reverseGeocode } from "./geocoding.service.js";
 
@@ -14,6 +15,16 @@ export const getCurrentWeather = async (location) => {
   const locationKey = location.toLowerCase();
 
   const selectedLocation = LOCATIONS[locationKey];
+
+  const databaseLocation = await getLocationByName(
+  selectedLocation.name
+);
+
+if (!databaseLocation) {
+  const error = new Error("Location is not configured in database");
+  error.statusCode = 500;
+  throw error;
+}
 
   if (!selectedLocation) {
     const error = new Error("Location not supported");
@@ -41,7 +52,7 @@ export const getCurrentWeather = async (location) => {
   });
 
   const latestSnapshot = await getLatestWeatherSnapshot(
-  selectedLocation.name
+  databaseLocation.id
 );
 
 if (latestSnapshot) {
@@ -99,6 +110,7 @@ if (latestSnapshot) {
 
  await createWeatherSnapshot({
   location: selectedLocation.name,
+  locationId: databaseLocation.id,
   latitude: selectedLocation.latitude,
   longitude: selectedLocation.longitude,
   temperature: data.current.temperature_2m,
@@ -209,10 +221,20 @@ export const getHistoricalWeather = async (
     throw error;
   }
 
-  return getWeatherHistory(
-    selectedLocation.name,
-    validHours
-  );
+  const databaseLocation = await getLocationByName(
+  selectedLocation.name
+);
+
+if (!databaseLocation) {
+  const error = new Error("Location is not configured in database");
+  error.statusCode = 500;
+  throw error;
+}
+
+return getWeatherHistory(
+  databaseLocation.id,
+  validHours
+);
 };
 
 export const getCurrentWeatherByCoordinates = async (

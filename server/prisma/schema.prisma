@@ -23,14 +23,26 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+model Location {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  latitude  Float
+  longitude Float
+  createdAt DateTime @default(now())
+
+  weatherSnapshots WeatherSnapshot[] @relation("LocationWeatherSnapshots")
+}
+
 model WeatherSnapshot {
   id                  String   @id @default(cuid())
+  locationId          String?
   location            String
   latitude            Float
   longitude           Float
   temperature         Float?
   humidity            Float?
-  apparentTemperature  Float?
+  apparentTemperature Float?
   precipitation       Float?
   rain                Float?
   weatherCode         Int?
@@ -38,5 +50,7 @@ model WeatherSnapshot {
   windDirection       Float?
   recordedAt          DateTime @default(now())
 
-  @@index([location, recordedAt])
+  locationRef Location? @relation("LocationWeatherSnapshots", fields: [locationId], references: [id])
+
+  @@index([locationId, recordedAt])
 }
