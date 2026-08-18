@@ -1,6 +1,10 @@
 import { LOCATIONS } from "../config/locations.js";
 import { analyzeCurrentConditions } from "./agriculture.service.js";
 import { getWeatherDescription } from "../utils/weather-code.js";
+import {
+  createWeatherSnapshot,
+  getLatestWeatherSnapshot,
+} from "../repositories/weather.repository.js";
 
 const OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast";
 
@@ -34,6 +38,46 @@ export const getCurrentWeather = async (location) => {
     precipitation_unit: "mm",
   });
 
+  const latestSnapshot = await getLatestWeatherSnapshot(
+  selectedLocation.name
+);
+
+if (latestSnapshot) {
+  const ageInMinutes =
+    (Date.now() - latestSnapshot.recordedAt.getTime()) / (1000 * 60);
+
+  if (ageInMinutes < 15) {
+    return {
+      location: selectedLocation.name,
+      coordinates: {
+        latitude: selectedLocation.latitude,
+        longitude: selectedLocation.longitude,
+      },
+      current: {
+        time: latestSnapshot.recordedAt,
+        temperature_2m: latestSnapshot.temperature,
+        relative_humidity_2m: latestSnapshot.humidity,
+        apparent_temperature: latestSnapshot.apparentTemperature,
+        precipitation: latestSnapshot.precipitation,
+        rain: latestSnapshot.rain,
+        weather_code: latestSnapshot.weatherCode,
+        wind_speed_10m: latestSnapshot.windSpeed,
+        wind_direction_10m: latestSnapshot.windDirection,
+      },
+      agriculturalAnalysis: analyzeCurrentConditions({
+        temperature: latestSnapshot.temperature,
+        humidity: latestSnapshot.humidity,
+        precipitation: latestSnapshot.precipitation,
+        rain: latestSnapshot.rain,
+      }),
+      weatherDescription: getWeatherDescription(
+        latestSnapshot.weatherCode
+      ),
+      cached: true,
+    };
+  }
+}
+
   const response = await fetch(`${OPEN_METEO_URL}?${params}`);
 
   if (!response.ok) {
@@ -51,6 +95,20 @@ export const getCurrentWeather = async (location) => {
   rain: data.current.rain,
  });
 
+ await createWeatherSnapshot({
+  location: selectedLocation.name,
+  latitude: selectedLocation.latitude,
+  longitude: selectedLocation.longitude,
+  temperature: data.current.temperature_2m,
+  humidity: data.current.relative_humidity_2m,
+  apparentTemperature: data.current.apparent_temperature,
+  precipitation: data.current.precipitation,
+  rain: data.current.rain,
+  weatherCode: data.current.weather_code,
+  windSpeed: data.current.wind_speed_10m,
+  windDirection: data.current.wind_direction_10m,
+});
+
  return {
   location: selectedLocation.name,
   coordinates: {
@@ -62,6 +120,7 @@ export const getCurrentWeather = async (location) => {
   weatherDescription: getWeatherDescription(
   data.current.weather_code),
   agriculturalAnalysis,
+  cached: false,
  };
 };
 
