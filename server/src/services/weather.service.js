@@ -52,3 +52,58 @@ export const getCurrentWeather = async (location) => {
     units: data.current_units,
   };
 };
+
+export const getWeatherForecast = async (location) => {
+  const locationKey = location.toLowerCase();
+
+  const selectedLocation = LOCATIONS[locationKey];
+
+  if (!selectedLocation) {
+    const error = new Error("Location not supported");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const params = new URLSearchParams({
+    latitude: selectedLocation.latitude,
+    longitude: selectedLocation.longitude,
+    daily: [
+      "weather_code",
+      "temperature_2m_max",
+      "temperature_2m_min",
+      "apparent_temperature_max",
+      "apparent_temperature_min",
+      "precipitation_sum",
+      "rain_sum",
+      "precipitation_probability_max",
+      "wind_speed_10m_max",
+      "sunrise",
+      "sunset",
+    ].join(","),
+    timezone: "Asia/Kolkata",
+    forecast_days: "7",
+    temperature_unit: "celsius",
+    wind_speed_unit: "kmh",
+    precipitation_unit: "mm",
+  });
+
+  const response = await fetch(`${OPEN_METEO_URL}?${params}`);
+
+  if (!response.ok) {
+    const error = new Error("Weather provider request failed");
+    error.statusCode = 502;
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return {
+    location: selectedLocation.name,
+    coordinates: {
+      latitude: selectedLocation.latitude,
+      longitude: selectedLocation.longitude,
+    },
+    daily: data.daily,
+    units: data.daily_units,
+  };
+};
