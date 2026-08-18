@@ -58,3 +58,18 @@ export const getLatestWeatherSnapshot = async (locationId) => {
     },
   });
 };
+
+export const searchLocationsInDatabase = async (query) => {
+  return prisma.location.findMany({
+    where: {
+      name: {
+        contains: query,
+        mode: "insensitive",
+      },
+    },
+    take: 5,
+    orderBy: {
+      name: "asc",
+    },
+  });
+};
