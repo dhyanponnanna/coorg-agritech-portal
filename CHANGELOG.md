@@ -5,8 +5,8 @@
 - Initialized React frontend
 - Configured Express backend
 - Created project structure
-- created the database and the schema using Prisma
-- created user registration, login, jwt implementation and role based access
+- Created the database and the schema using Prisma
+- Created user registration, login, JWT implementation and role based access
 - Weather APIs
 - 5 Kodagu locations
 - PostgreSQL snapshots
@@ -17,12 +17,4 @@
 - Reverse geocoding
 - Location search
 - Agricultural analysis
-- React + TypeScript API integration
-- Location search
-- Kodagu quick locations
-- Current GPS location
-- Current weather card
-- Agricultural advisory
-- 7-day forecast
-- Coordinate-based forecast
-- Search-based forecast
+- Weather dashboard functionality
