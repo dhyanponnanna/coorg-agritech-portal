@@ -3,6 +3,7 @@ import {
   getWeatherForecast,
   getHistoricalWeather,
   getCurrentWeatherByCoordinates,
+  getWeatherForecastByCoordinates,
 } from "../services/weather.service.js";
 
 export const getCurrentWeatherController = async (req, res, next) => {
@@ -79,6 +80,30 @@ export const getCurrentWeatherByCoordinatesController = async (
       success: true,
       message: "Current location weather retrieved successfully",
       data: weather,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getWeatherForecastByCoordinatesController = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const { latitude, longitude } = req.query;
+
+    const forecast = await getWeatherForecastByCoordinates(
+      latitude,
+      longitude
+    );
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Current location forecast retrieved successfully",
+      data: forecast,
     });
   } catch (error) {
     next(error);

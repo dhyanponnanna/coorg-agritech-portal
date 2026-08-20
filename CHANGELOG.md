@@ -17,3 +17,12 @@
 - Reverse geocoding
 - Location search
 - Agricultural analysis
+- React + TypeScript API integration
+- Location search
+- Kodagu quick locations
+- Current GPS location
+- Current weather card
+- Agricultural advisory
+- 7-day forecast
+- Coordinate-based forecast
+- Search-based forecast

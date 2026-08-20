@@ -318,3 +318,82 @@ export const getCurrentWeatherByCoordinates = async (
   agriculturalAnalysis,
 };
 };
+
+export const getWeatherForecastByCoordinates = async (
+  latitude,
+  longitude
+) => {
+  const lat = Number(latitude);
+  const lon = Number(longitude);
+
+  if (
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lon) ||
+    lat < -90 ||
+    lat > 90 ||
+    lon < -180 ||
+    lon > 180
+  ) {
+    const error = new Error("Invalid latitude or longitude");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const params = new URLSearchParams({
+    latitude: lat.toString(),
+    longitude: lon.toString(),
+    daily: [
+      "weather_code",
+      "temperature_2m_max",
+      "temperature_2m_min",
+      "apparent_temperature_max",
+      "apparent_temperature_min",
+      "precipitation_sum",
+      "rain_sum",
+      "precipitation_probability_max",
+      "wind_speed_10m_max",
+      "sunrise",
+      "sunset",
+    ].join(","),
+    timezone: "auto",
+    forecast_days: "7",
+    temperature_unit: "celsius",
+    wind_speed_unit: "kmh",
+    precipitation_unit: "mm",
+  });
+
+  const response = await fetch(
+    `${OPEN_METEO_URL}?${params}`
+  );
+
+  if (!response.ok) {
+    const error = new Error(
+      "Weather provider request failed"
+    );
+    error.statusCode = 502;
+    throw error;
+  }
+
+  const data = await response.json();
+
+  let location = null;
+
+  try {
+    location = await reverseGeocode(lat, lon);
+  } catch (error) {
+    console.error(
+      "Reverse geocoding failed:",
+      error.message
+    );
+  }
+
+  return {
+    location,
+    coordinates: {
+      latitude: lat,
+      longitude: lon,
+    },
+    daily: data.daily,
+    units: data.daily_units,
+  };
+};

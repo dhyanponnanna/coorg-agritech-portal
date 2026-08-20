@@ -1,122 +1,205 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from "react";
+
+import {
+  getCurrentWeather,
+  getWeatherForecast,
+  getWeatherByCoordinates,
+  getWeatherForecastByCoordinates,
+  type CurrentWeather,
+  type LocationResult,
+  type WeatherForecastData,
+} from "./services/weatherApi";
+
+import LocationSearch from "./components/LocationSearch";
+import QuickLocations from "./components/QuickLocations";
+import CurrentLocationButton from "./components/CurrentLocationButton";
+import CurrentWeatherCard from "./components/CurrentWeatherCard";
+import AgriculturalAdvisory from "./components/AgriculturalAdvisory";
+import WeatherForecast from "./components/WeatherForecast";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [selectedLocation, setSelectedLocation] =
+    useState("madikeri");
+
+  const [locationName, setLocationName] =
+    useState("Madikeri");
+
+  const [weather, setWeather] =
+    useState<CurrentWeather | null>(null);
+
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] =
+    useState<string | null>(null);
+
+  const [forecast, setForecast] =
+  useState<WeatherForecastData | null>(null);
+    
+
+ const loadWeather = async (location: string) => {
+  try {
+    setLoading(true);
+    setError(null);
+
+    const [weatherResponse, forecastResponse] =
+      await Promise.all([
+        getCurrentWeather(location),
+        getWeatherForecast(location),
+      ]);
+
+    setWeather(weatherResponse.data);
+    setForecast(forecastResponse.data);
+  } catch (error) {
+    if (error instanceof Error) {
+      setError(error.message);
+    } else {
+      setError("Failed to load weather");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+//   const handleManualClick = useCallback(() => {
+//   loadWeather(selectedLocation);
+// }, [selectedLocation]);
+
+  useEffect(() => {
+    loadWeather(selectedLocation);
+  }, [selectedLocation]);
+
+  const handleQuickLocationSelect = (
+  location: string
+) => {
+  setSelectedLocation(location);
+
+  const formattedName =
+    location.charAt(0).toUpperCase() +
+    location.slice(1);
+
+  setLocationName(formattedName);
+};
+
+const handleLocationSelect = async (
+  location: LocationResult
+) => {
+  try {
+    setLocationName(location.name);
+    setLoading(true);
+    setError(null);
+
+    const [
+      weatherResponse,
+      forecastResponse,
+    ] = await Promise.all([
+      getWeatherByCoordinates(
+        location.latitude,
+        location.longitude
+      ),
+      getWeatherForecastByCoordinates(
+        location.latitude,
+        location.longitude
+      ),
+    ]);
+
+    setWeather(weatherResponse.data);
+    setForecast(forecastResponse.data);
+  } catch (error) {
+    if (error instanceof Error) {
+      setError(error.message);
+    } else {
+      setError("Failed to load weather");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleCurrentLocation = async (
+  latitude: number,
+  longitude: number
+) => {
+  try {
+    setLoading(true);
+    setError(null);
+
+    const [
+      weatherResponse,
+      forecastResponse,
+    ] = await Promise.all([
+      getWeatherByCoordinates(
+        latitude,
+        longitude
+      ),
+      getWeatherForecastByCoordinates(
+        latitude,
+        longitude
+      ),
+    ]);
+
+    setWeather(weatherResponse.data);
+    setForecast(forecastResponse.data);
+
+    const location =
+      weatherResponse.data.location;
+
+    const name =
+      location.address.city ||
+      location.address.town ||
+      location.address.village ||
+      location.address.district ||
+      "Current Location";
+
+    setLocationName(name);
+  } catch (error) {
+    if (error instanceof Error) {
+      setError(error.message);
+    } else {
+      setError(
+        "Failed to load current location weather"
+      );
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <main>
+      <h1>Coorg Agri-Tech</h1>
 
-      <div className="ticks"></div>
+      <LocationSearch
+        onLocationSelect={handleLocationSelect}
+      />
+      <CurrentLocationButton
+        onLocationFound={handleCurrentLocation}
+      />
+      <QuickLocations
+        selectedLocation={selectedLocation}
+        onSelect={handleQuickLocationSelect}
+      />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {loading && <p>Loading weather...</p>}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {error && <p>{error}</p>}
+
+      {weather && (
+  <>
+    <CurrentWeatherCard
+      weather={weather}
+      locationName={locationName}
+    />
+
+    <AgriculturalAdvisory
+      weather={weather}
+    />
+    {forecast && (
+  <WeatherForecast forecast={forecast} />
+)}
+  </>
+)}
+    </main>
+  );
 }
 
-export default App
+export default App;
