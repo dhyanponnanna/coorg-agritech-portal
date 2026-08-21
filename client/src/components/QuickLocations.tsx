@@ -24,11 +24,16 @@ function QuickLocations({
   onSelect,
 }: QuickLocationsProps) {
   return (
-    <div>
+    <div className="quick-locations">
       {LOCATIONS.map((location) => (
         <button
           key={location}
           type="button"
+          className={`quick-location-button ${
+  selectedLocation === location
+    ? "active"
+    : ""
+}`}
           onClick={() => onSelect(location)}
           aria-pressed={selectedLocation === location}
         >

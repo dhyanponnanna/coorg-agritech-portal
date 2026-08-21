@@ -65,6 +65,7 @@ function CurrentLocationButton({
       <button
         type="button"
         onClick={handleGetLocation}
+        className="current-location-button"
         disabled={loading}
       >
         {loading

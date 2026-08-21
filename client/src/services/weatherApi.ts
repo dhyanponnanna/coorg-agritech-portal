@@ -147,3 +147,25 @@ export const getWeatherForecast = async (
     `/weather/forecast/${encodeURIComponent(location)}`
   );
 };
+
+export const getWeatherAcrossKodagu = async (
+  locations: string[]
+) => {
+  const results = await Promise.all(
+    locations.map(async (location) => {
+      const [currentResponse, forecastResponse] =
+        await Promise.all([
+          getCurrentWeather(location),
+          getWeatherForecast(location),
+        ]);
+
+      return {
+        location,
+        weather: currentResponse.data,
+        forecast: forecastResponse.data,
+      };
+    })
+  );
+
+  return results;
+};

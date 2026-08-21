@@ -51,7 +51,11 @@ function LocationSearch({
   }, [query]);
 
   return (
-    <div>
+    <section className="location-section">
+      <div className="section-label">
+        FIND YOUR LOCATION
+      </div>
+    <div className="search-wrapper">
       <input
         type="text"
         placeholder="Search for a location..."
@@ -59,7 +63,11 @@ function LocationSearch({
         onChange={(event) =>
           setQuery(event.target.value)
         }
+        className="location-search-input"
       />
+      <span className="search-icon">
+          ⌕
+        </span>
 
       {loading && <p>Searching...</p>}
 
@@ -85,6 +93,7 @@ function LocationSearch({
         </div>
       )}
     </div>
+    </section>
   );
 }
 

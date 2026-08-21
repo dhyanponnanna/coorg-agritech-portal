@@ -16,6 +16,8 @@ import CurrentLocationButton from "./components/CurrentLocationButton";
 import CurrentWeatherCard from "./components/CurrentWeatherCard";
 import AgriculturalAdvisory from "./components/AgriculturalAdvisory";
 import WeatherForecast from "./components/WeatherForecast";
+import Header from "./components/Header";
+import WeatherAcrossKodagu from "./components/WeatherAcrossKodagu";
 
 function App() {
   const [selectedLocation, setSelectedLocation] =
@@ -165,25 +167,32 @@ const handleCurrentLocation = async (
 };
 
   return (
-    <main>
-      <h1>Coorg Agri-Tech</h1>
+    <div className="app">
+    <main className="app-container">
+      <Header />
 
-      <LocationSearch
-        onLocationSelect={handleLocationSelect}
-      />
-      <CurrentLocationButton
-        onLocationFound={handleCurrentLocation}
-      />
-      <QuickLocations
-        selectedLocation={selectedLocation}
-        onSelect={handleQuickLocationSelect}
-      />
+<LocationSearch
+  onLocationSelect={handleLocationSelect}
+/>
 
-      {loading && <p>Loading weather...</p>}
+<CurrentLocationButton
+  onLocationFound={handleCurrentLocation}
+/>
 
-      {error && <p>{error}</p>}
+<QuickLocations
+  selectedLocation={selectedLocation}
+  onSelect={handleQuickLocationSelect}
+/>
 
-      {weather && (
+<WeatherAcrossKodagu 
+  onSelect={handleQuickLocationSelect}
+/>
+
+{loading && <p>Loading weather...</p>}
+
+{error && <p>{error}</p>}
+
+{weather && (
   <>
     <CurrentWeatherCard
       weather={weather}
@@ -193,12 +202,16 @@ const handleCurrentLocation = async (
     <AgriculturalAdvisory
       weather={weather}
     />
-    {forecast && (
-  <WeatherForecast forecast={forecast} />
-)}
   </>
 )}
+
+{forecast && (
+  <WeatherForecast
+    forecast={forecast}
+  />
+)}
     </main>
+    </div>
   );
 }
 

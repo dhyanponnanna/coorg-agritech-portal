@@ -10,44 +10,77 @@ function AgriculturalAdvisory({
   const analysis = weather.agriculturalAnalysis;
 
   return (
-    <section>
-      <h2>Agricultural Conditions</h2>
-
-      <div>
-        <article>
-          <span>🌧️ Rainfall Risk</span>
-          <strong>{analysis.rainfallRisk}</strong>
-        </article>
-
-        <article>
-          <span>💧 Humidity Risk</span>
-          <strong>{analysis.humidityRisk}</strong>
-        </article>
-
-        <article>
-          <span>🚜 Spraying</span>
-          <strong>
-            {analysis.sprayingSuitability}
-          </strong>
-        </article>
+    <section className="agriculture-section">
+  <div className="agriculture-header">
+    <div>
+      <div className="section-label">
+        FARM CONDITIONS
       </div>
 
-      {analysis.recommendations.length > 0 && (
-        <div>
-          <h3>Recommendations</h3>
+      <h2>Agricultural Conditions</h2>
+    </div>
 
-          <ul>
-            {analysis.recommendations.map(
-              (recommendation, index) => (
-                <li key={index}>
-                  {recommendation}
-                </li>
-              )
-            )}
-          </ul>
-        </div>
-      )}
-    </section>
+    <span className="agriculture-mark">
+      AGRI
+    </span>
+  </div>
+
+  <div className="agriculture-grid">
+    <article className="agriculture-item">
+      <span className="agriculture-item-label">
+        RAINFALL RISK
+      </span>
+
+      <strong>{analysis.rainfallRisk}</strong>
+
+      <p>
+        Based on current rainfall conditions.
+      </p>
+    </article>
+
+    <article className="agriculture-item">
+      <span className="agriculture-item-label">
+        HUMIDITY RISK
+      </span>
+
+      <strong>{analysis.humidityRisk}</strong>
+
+      <p>
+        High humidity can increase crop disease risk.
+      </p>
+    </article>
+
+    <article className="agriculture-item">
+      <span className="agriculture-item-label">
+        SPRAYING
+      </span>
+
+      <strong>{analysis.sprayingSuitability}</strong>
+
+      <p>
+        Consider weather conditions before spraying.
+      </p>
+    </article>
+  </div>
+
+  {analysis.recommendations.length > 0 && (
+    <div className="field-note">
+      <span className="field-note-label">
+        FIELD NOTE
+      </span>
+
+      <ul>
+        {analysis.recommendations.map(
+          (recommendation, index) => (
+            <li key={index}>
+              {recommendation}
+            </li>
+          )
+        )}
+      </ul>
+    </div>
+  )}
+</section>
   );
 }
 
