@@ -2,7 +2,9 @@ import bcrypt from "bcrypt";
 import prisma from "../config/prisma.js";
 import { generateToken } from "../utils/jwt.js";
 
-export const registerUser = async ({ fullName, email, password }) => {
+
+
+export const registerUser = async ({ fullName, email, password, role, }) => {
   const existingUser = await prisma.user.findUnique({
     where: {
       email,
@@ -16,12 +18,14 @@ export const registerUser = async ({ fullName, email, password }) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);
+  const userRole = role === "WORKER" ? "WORKER" : "OWNER";
 
   const user = await prisma.user.create({
     data: {
       fullName,
       email,
       password: hashedPassword,
+      role: userRole,
     },
     select: {
       id: true,

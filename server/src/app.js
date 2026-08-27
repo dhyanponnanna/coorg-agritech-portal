@@ -9,6 +9,7 @@ import { errorHandler } from "./middleware/error.middleware.js";
 import adminRoutes from "./routes/admin.routes.js";
 import weatherRoutes from "./routes/weather.routes.js";
 import geocodingRoutes from "./routes/geocoding.routes.js";
+import laborRoutes from "./routes/labor.routes.js";
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/weather", weatherRoutes);
 app.use("/api/v1/geocoding", geocodingRoutes);
+app.use("/api/v1/labor", laborRoutes);
 
 app.use(errorHandler);
 

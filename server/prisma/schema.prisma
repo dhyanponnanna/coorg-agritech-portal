@@ -18,9 +18,12 @@ model User {
   fullName  String
   email     String   @unique
   password  String
-  role      UserRole @default(OWNER)
+  role      UserRole
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  workerProfile WorkerProfile?
+  laborJobs     LaborJob[]
 }
 
 model Location {
@@ -53,4 +56,72 @@ model WeatherSnapshot {
   locationRef Location? @relation("LocationWeatherSnapshots", fields: [locationId], references: [id])
 
   @@index([locationId, recordedAt])
+}
+
+model WorkerProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  phone        String?
+  location     String?
+  skills       String[]
+  experience   Int?
+  availability Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User               @relation(fields: [userId], references: [id])
+  applications LaborApplication[]
+}
+
+model LaborJob {
+  id              String    @id @default(cuid())
+  ownerId         String
+  title           String
+  estateName      String
+  location        String
+  crop            String
+  workType        String
+  workersRequired Int
+  startDate       DateTime
+  endDate         DateTime
+  wagePerDay      Float
+  description     String?
+  status          JobStatus @default(OPEN)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  owner        User               @relation(fields: [ownerId], references: [id])
+  applications LaborApplication[]
+
+  @@index([ownerId])
+  @@index([location])
+  @@index([status])
+}
+
+model LaborApplication {
+  id        String            @id @default(cuid())
+  jobId     String
+  workerId  String
+  status    ApplicationStatus @default(PENDING)
+  appliedAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  job    LaborJob      @relation(fields: [jobId], references: [id])
+  worker WorkerProfile @relation(fields: [workerId], references: [id])
+
+  @@unique([jobId, workerId])
+  @@index([jobId])
+  @@index([workerId])
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+  FILLED
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

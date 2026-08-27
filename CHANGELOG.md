@@ -1,3 +1,5 @@
+# Changelog
+
 ## v0.1.0
 
 - Initialized React frontend
@@ -15,11 +17,14 @@
 - Reverse geocoding
 - Location search
 - Agricultural analysis
-- Redesigned weather dashboard UI
-- Added live date and time display
-- Added weather condition emojis based on weather codes
-- Added Weather Across Kodagu section
-- Added weather overview for all 5 Kodagu locations
-- Added daily high and low temperatures to location weather cards
-- Made district weather cards clickable for location selection
-- Improved responsive weather dashboard layout
+- Weather dashboard
+- Live weather time and date
+- Weather condition indicators
+- Location search and current location weather
+- Labor matchmaking database structure
+- Labor job creation for owners
+- Worker registration and profiles
+- Worker job applications
+- Owner application management
+- Role-based labor routes
+- End-to-end owner and worker labor workflow
