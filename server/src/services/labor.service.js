@@ -10,11 +10,9 @@ import {
   getApplicationsByWorker,
   getLaborApplicationById,
   updateLaborApplicationStatus,
+  getAvailableWorkers,
 } from "../repositories/labor.repository.js";
 
-// =====================================
-// LABOR JOB SERVICES
-// =====================================
 
 export const createLaborJobService = async (
   ownerId,
@@ -44,6 +42,20 @@ export const createLaborJobService = async (
 
   if (!jobData.workType) {
     const error = new Error("Work type is required");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const requiredSkills = Array.isArray(jobData.requiredSkills)
+  ? jobData.requiredSkills
+      .map((skill) => String(skill).trim())
+      .filter(Boolean)
+  : [];
+
+  if (requiredSkills.length === 0) {
+    const error = new Error(
+      "At least one required skill is needed"
+    );
     error.statusCode = 400;
     throw error;
   }
@@ -103,6 +115,7 @@ export const createLaborJobService = async (
     crop: jobData.crop.trim(),
     workType: jobData.workType.trim(),
     workersRequired,
+    requiredSkills,
     startDate,
     endDate,
     wagePerDay,
@@ -138,9 +151,9 @@ export const getLaborJobsByOwnerService = async (
   return getLaborJobsByOwner(ownerId);
 };
 
-// =====================================
+
 // WORKER PROFILE SERVICES
-// =====================================
+
 
 export const createWorkerProfileService = async (
   userId,
@@ -375,4 +388,107 @@ export const updateApplicationStatusService = async (
     applicationId,
     status
   );
+};
+
+export const matchWorkersToJob = async (jobId) => {
+  if (!jobId) {
+    const error = new Error("Job ID is required");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const job = await getLaborJobById(jobId);
+
+  if (!job) {
+    const error = new Error("Labor job not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const workers = await getAvailableWorkers();
+  const appliedWorkerIds = new Set(
+    job.applications.map((application) => application.workerId)
+  );
+
+  const requiredSkills = job.requiredSkills || [];
+  
+
+  const matches = workers
+  .filter((worker) => !appliedWorkerIds.has(worker.id))
+  .map((worker) => {
+    const workerSkills = worker.skills.map((skill) =>
+      skill.toLowerCase()
+    );
+
+    const matchingSkills = requiredSkills.filter((requiredSkill) => {
+    const required = requiredSkill.toLowerCase().trim();
+
+      return workerSkills.some((workerSkill) =>
+        workerSkill.includes(required) ||
+        required.includes(workerSkill)
+      );
+    });
+
+    const skillScore =
+      requiredSkills.length > 0
+        ? (matchingSkills.length / requiredSkills.length) * 50
+        : 0;
+
+    const experienceScore =
+      Math.min((worker.experience || 0) / 5, 1) * 30;
+
+    const availabilityScore = worker.availability ? 20 : 0;
+
+    const totalScore =
+      skillScore +
+      experienceScore +
+      availabilityScore;
+
+    let matchLevel;
+
+      if (totalScore >= 80) {
+        matchLevel = "EXCELLENT";
+      } else if (totalScore >= 60) {
+        matchLevel = "GOOD";
+      } else if (totalScore >= 40) {
+        matchLevel = "FAIR";
+      } else {
+        matchLevel = "LOW";
+      }
+
+    let matchReason;
+
+    if (matchingSkills.length === requiredSkills.length && worker.availability) {
+      matchReason = "All required skills matched and worker is available";
+    } else if (matchingSkills.length > 0 && worker.availability) {
+      matchReason = "Relevant skills matched and worker is available";
+    } else if (matchingSkills.length > 0) {
+      matchReason = "Relevant skills matched";
+    } else {
+      matchReason = "Limited skill match";
+    }
+
+    return {
+      workerId: worker.id,
+      workerName: worker.user.fullName,
+      skills: worker.skills,
+      experience: worker.experience,
+      score: Math.round(totalScore),
+      matchPercentage: Math.round(totalScore),
+      matchLevel,
+      matchingSkills,
+      matchReason,
+      scoreBreakdown: {
+        skills: Math.round(skillScore),
+        experience: Math.round(experienceScore),
+        availability: availabilityScore,
+      },
+    };
+  });
+
+  const recommendedWorkers = matches
+  .filter((worker) => worker.score >= 30)
+  .sort((a, b) => b.score - a.score);
+
+  return recommendedWorkers;
 };

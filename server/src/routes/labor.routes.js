@@ -10,6 +10,7 @@ import {
   getJobApplicationsController,
   getWorkerApplicationsController,
   updateApplicationStatusController,
+  matchWorkersToJobController,
 } from "../controllers/labor.controller.js";
 import { authenticate } from "../middleware/auth.middleware.js";
 import { authorize } from "../middleware/role.middleware.js";
@@ -59,6 +60,13 @@ router.get(
   authenticate,
   authorize("OWNER"),
   getJobApplicationsController
+);
+
+router.get(
+  "/jobs/:jobId/matches",
+  authenticate,
+  authorize("OWNER"),
+  matchWorkersToJobController
 );
 
 router.get(

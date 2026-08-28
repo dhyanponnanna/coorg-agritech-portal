@@ -71,6 +71,7 @@ model WorkerProfile {
 
   user         User               @relation(fields: [userId], references: [id])
   applications LaborApplication[]
+  invitations  LaborInvitation[]
 }
 
 model LaborJob {
@@ -82,6 +83,7 @@ model LaborJob {
   crop            String
   workType        String
   workersRequired Int
+  requiredSkills  String[]
   startDate       DateTime
   endDate         DateTime
   wagePerDay      Float
@@ -92,6 +94,7 @@ model LaborJob {
 
   owner        User               @relation(fields: [ownerId], references: [id])
   applications LaborApplication[]
+  invitations  LaborInvitation[]
 
   @@index([ownerId])
   @@index([location])
@@ -121,6 +124,28 @@ enum JobStatus {
 }
 
 enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model LaborInvitation {
+  id        String           @id @default(cuid())
+  jobId     String
+  workerId  String
+  status    InvitationStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  job    LaborJob      @relation(fields: [jobId], references: [id])
+  worker WorkerProfile @relation(fields: [workerId], references: [id])
+
+  @@unique([jobId, workerId])
+  @@index([jobId])
+  @@index([workerId])
+}
+
+enum InvitationStatus {
   PENDING
   ACCEPTED
   REJECTED

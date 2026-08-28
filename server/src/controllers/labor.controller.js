@@ -9,6 +9,7 @@ import {
   getJobApplicationsService,
   getWorkerApplicationsService,
   updateApplicationStatusService,
+  matchWorkersToJob,
 } from "../services/labor.service.js";
 
 export const createLaborJobController = async (
@@ -215,6 +216,26 @@ export const updateApplicationStatusController = async (
       message:
         "Application status updated successfully",
       data: application,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const matchWorkersToJobController = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const matches = await matchWorkersToJob(
+      req.params.jobId
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Worker matches retrieved successfully",
+      data: matches,
     });
   } catch (error) {
     next(error);

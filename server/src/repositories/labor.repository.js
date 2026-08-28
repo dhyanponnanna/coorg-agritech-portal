@@ -14,6 +14,7 @@ export const createLaborJob = async (job) => {
       crop: job.crop,
       workType: job.workType,
       workersRequired: job.workersRequired,
+      requiredSkills: job.requiredSkills,
       startDate: job.startDate,
       endDate: job.endDate,
       wagePerDay: job.wagePerDay,
@@ -198,6 +199,26 @@ export const updateLaborApplicationStatus = async (
     },
     data: {
       status,
+    },
+  });
+};
+
+export const getAvailableWorkers = async () => {
+  return prisma.workerProfile.findMany({
+    where: {
+      availability: true,
+      user: {
+        role: "WORKER",
+      },
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+        },
+      },
     },
   });
 };
