@@ -35,6 +35,7 @@ model Location {
   createdAt DateTime @default(now())
 
   weatherSnapshots WeatherSnapshot[] @relation("LocationWeatherSnapshots")
+  weatherAlerts    WeatherAlert[]
 }
 
 model WeatherSnapshot {
@@ -149,4 +150,27 @@ enum InvitationStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+model WeatherAlert {
+  id          String        @id @default(cuid())
+  locationId  String
+  title       String
+  message     String
+  severity    AlertSeverity
+  weatherCode Int?
+  temperature Float?
+  windSpeed   Float?
+  createdAt   DateTime      @default(now())
+
+  location Location @relation(fields: [locationId], references: [id])
+
+  @@index([locationId])
+  @@index([createdAt])
+}
+ 
+enum AlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
 }

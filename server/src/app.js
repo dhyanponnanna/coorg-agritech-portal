@@ -11,6 +11,7 @@ import weatherRoutes from "./routes/weather.routes.js";
 import geocodingRoutes from "./routes/geocoding.routes.js";
 import laborRoutes from "./routes/labor.routes.js";
 import laborInvitationRoutes from "./routes/laborInvitation.routes.js";
+import weatherAlertRoutes from "./routes/weatherAlert.routes.js";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use("/api/v1/health", healthRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/weather", weatherRoutes);
+app.use("/api/v1/weather-alerts", weatherAlertRoutes);
 app.use("/api/v1/geocoding", geocodingRoutes);
 app.use("/api/v1/labor", laborRoutes);
 app.use("/api/v1/labor", laborInvitationRoutes);

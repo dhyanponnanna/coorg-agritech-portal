@@ -107,7 +107,7 @@ export const getWorkerInvitationsService = async (userId) => {
     throw error;
   }
 
-  return getInvitationsByWorker(workerProfile.id);
+  return getInvitationsByWorker(workerProfile.user.userId);
 };
 
 export const getJobInvitationsService = async (
