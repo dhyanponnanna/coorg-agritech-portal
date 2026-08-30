@@ -88,11 +88,66 @@ export interface LocationResult {
   source?: "local" | "nominatim";
 }
 
+export interface WeatherAlertLocation {
+  id: string;
+  name: string;
+  slug: string;
+  latitude: number;
+  longitude: number;
+  createdAt: string;
+}
+
+export interface WeatherAlert {
+  id: string;
+  locationId: string;
+  title: string;
+  message: string;
+  severity: string;
+  weatherCode: number;
+  temperature: number;
+  windSpeed: number;
+  createdAt: string;
+  location?: WeatherAlertLocation;
+} 
+
+export interface WeatherHistoryRecord {
+  id: string;
+  locationId: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  temperature: number;
+  humidity: number;
+  apparentTemperature: number;
+  precipitation: number;
+  rain: number;
+  weatherCode: number;
+  windSpeed: number;
+  windDirection: number;
+  recordedAt: string;
+}
+
+export interface WeatherHistoryData {
+  location: string;
+  hours: number;
+  count: number;
+  records: WeatherHistoryRecord[];
+}
+
 const request = async <T>(
   endpoint: string
 ): Promise<ApiResponse<T>> => {
+  const token = localStorage.getItem("token");
+
   const response = await fetch(
-    `${API_BASE_URL}${endpoint}`
+    `${API_BASE_URL}${endpoint}`,
+    {
+      headers: token
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : undefined,
+    }
   );
 
   const data = await response.json();
@@ -147,6 +202,23 @@ export const getWeatherForecast = async (
     `/weather/forecast/${encodeURIComponent(location)}`
   );
 };
+
+export const getRecentWeatherAlerts = async (
+  hours = 24
+): Promise<ApiResponse<WeatherAlert[]>> => {
+  return request<WeatherAlert[]>(
+    `/weather-alerts/recent?hours=${hours}`
+  );
+};
+
+// export const getWeatherHistory = async (
+//   location: string,
+//   hours = 24
+// ): Promise<ApiResponse<WeatherHistoryData>> => {
+//   return request<WeatherHistoryData>(
+//     `/weather/history/${encodeURIComponent(location)}?hours=${hours}`
+//   );
+// };
 
 export const getWeatherAcrossKodagu = async (
   locations: string[]

@@ -182,3 +182,191 @@
     border-right-color: var(--border);
   }
 }
+
+/* Weather Alerts */
+
+.weather-alerts {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.weather-alerts h2 {
+  margin-bottom: 1rem;
+}
+
+.weather-alert {
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.weather-alert h3 {
+  margin: 0 0 0.5rem;
+}
+
+.weather-alert p {
+  margin: 0 0 0.75rem;
+}
+
+.weather-alert-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.weather-alert-critical {
+  border-left: 5px solid #d32f2f;
+}
+
+.weather-alert-warning {
+  border-left: 5px solid #f9a825;
+}
+
+.weather-alert-info {
+  border-left: 5px solid #1976d2;
+}
+
+.weather-alert-empty {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.weather-alert-empty p {
+  margin: 0;
+}
+
+/* =========================
+   WEATHER HISTORY
+   ========================= */
+
+.weather-history {
+  margin-top: 48px;
+  padding: 0 0 48px;
+}
+
+.weather-history-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #dfe2dc;
+}
+
+.weather-history-header h2 {
+  margin: 6px 0 0;
+  font-size: 42px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+}
+
+.weather-history-header > span {
+  font-size: 14px;
+  color: #64706a;
+  white-space: nowrap;
+}
+
+.section-label {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #64706a;
+}
+
+.weather-history-list {
+  border-bottom: 1px solid #dfe2dc;
+}
+
+.weather-history-row {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(4, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid #e5e7e2;
+}
+
+.weather-history-row:last-child {
+  border-bottom: none;
+}
+
+.weather-history-time {
+  font-size: 14px;
+  color: #64706a;
+}
+
+.weather-history-row > div:not(.weather-history-time) {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.weather-history-row strong {
+  font-size: 21px;
+  font-weight: 500;
+  color: #20342b;
+}
+
+.weather-history-row span {
+  font-size: 12px;
+  color: #6d7772;
+  letter-spacing: 0.5px;
+}
+
+.weather-history > p {
+  margin: 20px 0;
+  color: #64706a;
+}
+
+/* =========================
+   WEATHER ALERT EMPTY STATE
+   ========================= */
+
+.weather-alerts {
+  margin-top: 36px;
+}
+
+.weather-alert-empty {
+  padding: 18px 0;
+  border-bottom: 1px solid #dfe2dc;
+}
+
+.weather-alert-empty p {
+  margin: 0;
+  color: #64706a;
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 768px) {
+  .weather-history {
+    margin-top: 36px;
+  }
+
+  .weather-history-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .weather-history-header h2 {
+    font-size: 34px;
+  }
+
+  .weather-history-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .weather-history-time {
+    grid-column: 1 / -1;
+  }
+}

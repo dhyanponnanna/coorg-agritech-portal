@@ -5,9 +5,11 @@ import {
   getWeatherForecast,
   getWeatherByCoordinates,
   getWeatherForecastByCoordinates,
+  getRecentWeatherAlerts,
   type CurrentWeather,
   type LocationResult,
   type WeatherForecastData,
+  type WeatherAlert,
 } from "./services/weatherApi";
 
 import LocationSearch from "./components/LocationSearch";
@@ -18,6 +20,7 @@ import AgriculturalAdvisory from "./components/AgriculturalAdvisory";
 import WeatherForecast from "./components/WeatherForecast";
 import Header from "./components/Header";
 import WeatherAcrossKodagu from "./components/WeatherAcrossKodagu";
+import WeatherAlerts from "./components/WeatherAlerts";
 
 function App() {
   const [selectedLocation, setSelectedLocation] =
@@ -31,6 +34,8 @@ function App() {
 
   const [loading, setLoading] = useState(false);
 
+  const [alerts, setAlerts] = useState<WeatherAlert[]>([]);
+
   const [error, setError] =
     useState<string | null>(null);
 
@@ -43,14 +48,20 @@ function App() {
     setLoading(true);
     setError(null);
 
-    const [weatherResponse, forecastResponse] =
-      await Promise.all([
-        getCurrentWeather(location),
-        getWeatherForecast(location),
-      ]);
+    const [
+      weatherResponse,
+      forecastResponse,
+      alertsResponse,
+    ] = await Promise.all([
+      getCurrentWeather(location),
+      getWeatherForecast(location),
+      getRecentWeatherAlerts(),
+    ]);
 
     setWeather(weatherResponse.data);
     setForecast(forecastResponse.data);
+    setAlerts(alertsResponse.data);
+
   } catch (error) {
     if (error instanceof Error) {
       setError(error.message);
@@ -198,6 +209,8 @@ const handleCurrentLocation = async (
       weather={weather}
       locationName={locationName}
     />
+
+    <WeatherAlerts alerts={alerts} />
 
     <AgriculturalAdvisory
       weather={weather}

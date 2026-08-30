@@ -20,19 +20,19 @@ router.post(
 
 router.get(
   "/location/:locationId",
-  authenticate,
+  //authenticate,
   getLocationWeatherAlertsController
 );
 
 router.get(
   "/recent",
-  authenticate,
+  //authenticate,
   getRecentWeatherAlertsController
 );
 
 router.get(
   "/:id",
-  authenticate,
+  //authenticate,
   getWeatherAlertByIdController
 );
 
