@@ -1,6 +1,10 @@
 import cron from "node-cron";
 import { LOCATIONS } from "../config/locations.js";
-import { createWeatherSnapshot } from "../repositories/weather.repository.js";
+import {
+  createWeatherSnapshot,
+  getLocationByName,
+} from "../repositories/weather.repository.js";
+import { generateWeatherAlertsService } from "../services/weatherAlert.service.js";
 
 const OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast";
 
@@ -34,8 +38,19 @@ const collectWeatherForLocation = async (location) => {
 
   const data = await response.json();
 
+  const databaseLocation = await getLocationByName(
+    location.name
+  );
+
+  if (!databaseLocation) {
+    throw new Error(
+      `Location not configured in database: ${location.name}`
+    );
+  }
+
   await createWeatherSnapshot({
     location: location.name,
+    locationId: databaseLocation.id,
     latitude: location.latitude,
     longitude: location.longitude,
     temperature: data.current.temperature_2m,
@@ -47,6 +62,8 @@ const collectWeatherForLocation = async (location) => {
     windSpeed: data.current.wind_speed_10m,
     windDirection: data.current.wind_direction_10m,
   });
+
+  await generateWeatherAlertsService(databaseLocation.id);
 
   console.log(
     `Weather collected: ${location.name}`

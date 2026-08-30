@@ -8,6 +8,7 @@ import {
   getLocationByName,
 } from "../repositories/weather.repository.js";
 import { reverseGeocode } from "./geocoding.service.js";
+import { generateWeatherAlertsService } from "./weatherAlert.service.js";
 
 const OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast";
 
@@ -16,21 +17,23 @@ export const getCurrentWeather = async (location) => {
 
   const selectedLocation = LOCATIONS[locationKey];
 
-  const databaseLocation = await getLocationByName(
-  selectedLocation.name
-);
+    if (!selectedLocation) {
+      const error = new Error("Location not supported");
+      error.statusCode = 404;
+      throw error;
+    }
 
-if (!databaseLocation) {
-  const error = new Error("Location is not configured in database");
-  error.statusCode = 500;
-  throw error;
-}
+    const databaseLocation = await getLocationByName(
+      selectedLocation.name
+    );
 
-  if (!selectedLocation) {
-    const error = new Error("Location not supported");
-    error.statusCode = 404;
-    throw error;
-  }
+    if (!databaseLocation) {
+      const error = new Error(
+        "Location is not configured in database"
+      );
+      error.statusCode = 500;
+      throw error;
+    }
 
   const params = new URLSearchParams({
     latitude: selectedLocation.latitude,
@@ -122,6 +125,8 @@ if (latestSnapshot) {
   windSpeed: data.current.wind_speed_10m,
   windDirection: data.current.wind_direction_10m,
 });
+
+await generateWeatherAlertsService(databaseLocation.id);
 
  return {
   location: selectedLocation.name,

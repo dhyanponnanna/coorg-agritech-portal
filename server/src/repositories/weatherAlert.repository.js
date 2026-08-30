@@ -9,6 +9,19 @@ export const createWeatherAlert = async ({
   temperature,
   windSpeed,
 }) => {
+  const existingAlert = await prisma.weatherAlert.findFirst({
+    where: {
+      locationId,
+      title,
+      createdAt: {
+        gte: new Date(Date.now() - 60 * 60 * 1000),
+      },
+    },
+  });
+
+  if (existingAlert) {
+    return null;
+  }
   return prisma.weatherAlert.create({
     data: {
       locationId,

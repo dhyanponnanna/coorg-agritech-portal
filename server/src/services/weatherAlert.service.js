@@ -100,7 +100,9 @@ export const generateWeatherAlertsService = async (
       ...alert,
     });
 
-    createdAlerts.push(created);
+    if (created) {
+      createdAlerts.push(created);
+    }
   }
 
   return createdAlerts;
