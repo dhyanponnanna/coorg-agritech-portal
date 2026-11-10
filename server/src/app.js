@@ -12,6 +12,7 @@ import geocodingRoutes from "./routes/geocoding.routes.js";
 import laborRoutes from "./routes/labor.routes.js";
 import laborInvitationRoutes from "./routes/laborInvitation.routes.js";
 import weatherAlertRoutes from "./routes/weatherAlert.routes.js";
+import emailSubscriptionRoutes from "./routes/emailSubscription.routes.js";
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use("/api/v1/weather-alerts", weatherAlertRoutes);
 app.use("/api/v1/geocoding", geocodingRoutes);
 app.use("/api/v1/labor", laborRoutes);
 app.use("/api/v1/labor", laborInvitationRoutes);
+app.use("/api/v1/email-subscriptions", emailSubscriptionRoutes);
 
 app.use(errorHandler);
 

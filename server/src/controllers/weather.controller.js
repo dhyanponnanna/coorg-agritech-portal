@@ -6,6 +6,10 @@ import {
   getWeatherForecastByCoordinates,
 } from "../services/weather.service.js";
 
+import {
+  getAllLocations,
+} from "../repositories/weather.repository.js";
+
 export const getCurrentWeatherController = async (req, res, next) => {
   try {
     const weather = await getCurrentWeather(req.params.location);
@@ -107,5 +111,27 @@ export const getWeatherForecastByCoordinatesController = async (
     });
   } catch (error) {
     next(error);
+  }
+};
+
+export const getAllLocationsController = async (
+  req,
+  res
+) => {
+  try {
+    const locations = await getAllLocations();
+
+    return res.status(200).json({
+      success: true,
+      message: "Locations fetched successfully",
+      data: locations,
+    });
+  } catch (error) {
+    console.error("Failed to fetch locations:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch locations",
+    });
   }
 };

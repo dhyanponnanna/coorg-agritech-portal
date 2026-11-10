@@ -36,6 +36,7 @@ model Location {
 
   weatherSnapshots WeatherSnapshot[] @relation("LocationWeatherSnapshots")
   weatherAlerts    WeatherAlert[]
+  emailSubscriptions EmailSubscription[]
 }
 
 model WeatherSnapshot {
@@ -173,4 +174,28 @@ enum AlertSeverity {
   INFO
   WARNING
   CRITICAL
+}
+
+model EmailSubscription {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  isVerified        Boolean  @default(false)
+  isActive          Boolean  @default(true)
+
+  verificationToken String?  @unique
+  unsubscribeToken  String   @unique
+
+  tokenExpiresAt    DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  
+  receiveHighTemperature Boolean @default(true)
+  receiveLowTemperature  Boolean @default(true)
+  receiveHeavyRain       Boolean @default(true)
+  receiveStrongWind      Boolean @default(true)
+
+  locations         Location[]
+
+  @@index([isVerified, isActive])
 }

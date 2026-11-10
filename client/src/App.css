@@ -370,3 +370,445 @@
     grid-column: 1 / -1;
   }
 }
+
+
+/* Weather Alerts Section */
+
+.weather-alerts {
+  margin-top: 28px;
+  margin-bottom: 28px;
+}
+
+.weather-alerts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.weather-alerts-header h2 {
+  margin: 0;
+}
+
+.alert-count {
+  background: #e8f0fe;
+  color: #2457a7;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.weather-alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.weather-alert {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-left: 5px solid #9ca3af;
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.weather-alert-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.weather-alert-top h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.alert-severity {
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.severity-critical {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.severity-high {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.severity-medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.severity-low {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.weather-alert-critical {
+  border-left-color: #dc2626;
+}
+
+.weather-alert-high {
+  border-left-color: #ea580c;
+}
+
+.weather-alert-medium {
+  border-left-color: #d97706;
+}
+
+.weather-alert-low {
+  border-left-color: #2563eb;
+}
+
+.weather-alert-message {
+  color: #4b5563;
+  margin: 12px 0;
+  line-height: 1.6;
+}
+
+.weather-alert-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: 14px;
+  color: #374151;
+  margin-top: 14px;
+}
+
+.weather-alert-footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+  margin-top: 14px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.weather-alert-empty {
+  text-align: center;
+  padding: 30px 15px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+}
+
+.alert-empty-icon {
+  font-size: 32px;
+}
+
+.weather-alert-empty h3 {
+  color: #166534;
+  margin: 10px 0 5px;
+}
+
+.weather-alert-empty p {
+  color: #4b5563;
+  margin: 0;
+}
+
+/* Mobile Responsive */
+
+@media (max-width: 600px) {
+  .weather-alert {
+    padding: 14px;
+  }
+
+  .weather-alert-top {
+    align-items: flex-start;
+  }
+
+  .weather-alert-top h3 {
+    font-size: 15px;
+  }
+
+  .weather-alert-details {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .weather-alert-footer {
+    flex-direction: column;
+  }
+}
+
+
+.email-subscription {
+  margin-top: 28px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.subscription-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.subscription-icon {
+  font-size: 32px;
+}
+
+.subscription-header h2 {
+  margin: 0 0 6px;
+  font-size: 21px;
+  color: #1f2937;
+}
+
+.subscription-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.email-subscription form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.email-subscription form > label,
+.subscription-location-heading label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+}
+
+.email-subscription input[type="email"] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.email-subscription input[type="email"]:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+
+.subscription-location-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.subscription-location-heading span {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.subscription-location-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.subscription-location-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  cursor: pointer;
+  color: #374151;
+  font-size: 14px;
+}
+
+.subscription-location-option:has(input:checked) {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+
+.subscription-location-option input {
+  accent-color: #16a34a;
+}
+
+.email-subscription button {
+  margin-top: 12px;
+  padding: 13px 18px;
+  background: #15803d;
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.email-subscription button:hover:not(:disabled) {
+  background: #166534;
+}
+
+.email-subscription button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.subscription-success {
+  color: #15803d;
+  background: #f0fdf4;
+  padding: 11px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.subscription-error {
+  color: #b91c1c;
+  background: #fef2f2;
+  padding: 11px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .email-subscription {
+    padding: 18px;
+  }
+
+  .subscription-header h2 {
+    font-size: 18px;
+  }
+
+  .subscription-location-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.subscription-action-page {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.subscription-action-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 40px 28px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.subscription-action-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: #f0fdf4;
+  color: #15803d;
+  font-size: 30px;
+}
+
+.subscription-action-card h1 {
+  color: #1f2937;
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.subscription-action-card p {
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.action-success {
+  color: #15803d !important;
+}
+
+.action-error {
+  color: #dc2626 !important;
+}
+
+.action-home-button {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: #15803d;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.action-home-button:hover {
+  background: #166534;
+}
+
+
+/* Weather alert preferences */
+
+.subscription-preferences {
+  margin-top: 24px;
+}
+
+.subscription-preference-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.subscription-preference-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.subscription-preference-option:hover {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+
+.subscription-preference-option input {
+  width: 17px;
+  height: 17px;
+  accent-color: #16a34a;
+  cursor: pointer;
+}
+
+.subscription-preference-option span {
+  font-size: 14px;
+  color: #374151;
+}
+
+@media (max-width: 600px) {
+  .subscription-preference-list {
+    grid-template-columns: 1fr;
+  }
+}

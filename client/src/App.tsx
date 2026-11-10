@@ -21,6 +21,9 @@ import WeatherForecast from "./components/WeatherForecast";
 import Header from "./components/Header";
 import WeatherAcrossKodagu from "./components/WeatherAcrossKodagu";
 import WeatherAlerts from "./components/WeatherAlerts";
+import "./App.css";
+import EmailSubscription from "./components/EmailSubscription";
+import EmailSubscriptionAction from "./components/EmailSubscriptionAction";
 
 function App() {
   const [selectedLocation, setSelectedLocation] =
@@ -42,6 +45,21 @@ function App() {
   const [forecast, setForecast] =
   useState<WeatherForecastData | null>(null);
     
+  const filterAlertsByLocation = (
+  allAlerts: WeatherAlert[],
+  location: string
+) => {
+  const normalizedLocation = location
+    .trim()
+    .toLowerCase();
+
+  return allAlerts.filter(
+    (alert) =>
+      alert.location?.name?.trim().toLowerCase() ===
+      normalizedLocation
+  );
+};
+
 
  const loadWeather = async (location: string) => {
   try {
@@ -60,7 +78,12 @@ function App() {
 
     setWeather(weatherResponse.data);
     setForecast(forecastResponse.data);
-    setAlerts(alertsResponse.data);
+    setAlerts(
+  filterAlertsByLocation(
+    alertsResponse.data,
+    location
+  )
+);
 
   } catch (error) {
     if (error instanceof Error) {
@@ -80,6 +103,35 @@ function App() {
   useEffect(() => {
     loadWeather(selectedLocation);
   }, [selectedLocation]);
+  
+  useEffect(() => {
+  const refreshAlerts = async () => {
+    try {
+      const response = await getRecentWeatherAlerts();
+
+      const normalizedLocation = selectedLocation
+        .trim()
+        .toLowerCase();
+
+      const filteredAlerts = response.data.filter(
+        (alert) =>
+          alert.location?.name?.trim().toLowerCase() ===
+          normalizedLocation
+      );
+
+      setAlerts(filteredAlerts);
+    } catch (error) {
+      console.error("Failed to refresh weather alerts:", error);
+    }
+  };
+
+  const intervalId = window.setInterval(
+    refreshAlerts,
+    15 * 60 * 1000
+  );
+
+  return () => window.clearInterval(intervalId);
+}, [selectedLocation]);
 
   const handleQuickLocationSelect = (
   location: string
@@ -123,6 +175,7 @@ const handleLocationSelect = async (
     } else {
       setError("Failed to load weather");
     }
+    setAlerts([]);
   } finally {
     setLoading(false);
   }
@@ -171,11 +224,21 @@ const handleCurrentLocation = async (
       setError(
         "Failed to load current location weather"
       );
+      setAlerts([]);
     }
   } finally {
     setLoading(false);
   }
 };
+
+const currentPath = window.location.pathname;
+
+if (
+  currentPath === "/verify-email" ||
+  currentPath === "/unsubscribe"
+) {
+  return <EmailSubscriptionAction />;
+}
 
   return (
     <div className="app">
@@ -211,6 +274,8 @@ const handleCurrentLocation = async (
     />
 
     <WeatherAlerts alerts={alerts} />
+
+    <EmailSubscription />
 
     <AgriculturalAdvisory
       weather={weather}

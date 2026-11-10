@@ -134,6 +134,33 @@ export interface WeatherHistoryData {
   records: WeatherHistoryRecord[];
 }
 
+export interface AlertPreferences {
+  receiveHighTemperature: boolean;
+  receiveLowTemperature: boolean;
+  receiveHeavyRain: boolean;
+  receiveStrongWind: boolean;
+}
+
+export interface EmailSubscriptionRequest {
+  email: string;
+  locationIds: string[];
+  preferences: AlertPreferences;
+}
+
+export interface EmailSubscriptionResponse {
+  success: boolean;
+  message: string;
+  requiresVerification?: boolean;
+}
+
+export interface SubscriptionLocation {
+  id: string;
+  name: string;
+  slug: string;
+  latitude: number;
+  longitude: number;
+}
+
 const request = async <T>(
   endpoint: string
 ): Promise<ApiResponse<T>> => {
@@ -240,4 +267,67 @@ export const getWeatherAcrossKodagu = async (
   );
 
   return results;
+};
+
+export const subscribeToWeatherAlerts = async (
+  subscription: EmailSubscriptionRequest
+): Promise<EmailSubscriptionResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/email-subscriptions`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(subscription),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || "Failed to subscribe"
+    );
+  }
+
+  return data;
+};
+
+export const getSubscriptionLocations = async (): Promise<
+  ApiResponse<SubscriptionLocation[]>
+> => {
+  return request<SubscriptionLocation[]>("/weather/locations");
+};
+
+export const verifyEmailSubscription = async (
+  token: string
+): Promise<EmailSubscriptionResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/email-subscriptions/verify?token=${encodeURIComponent(token)}`
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Email verification failed");
+  }
+
+  return data;
+};
+
+export const unsubscribeFromWeatherAlerts = async (
+  token: string
+): Promise<EmailSubscriptionResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/email-subscriptions/unsubscribe?token=${encodeURIComponent(token)}`
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Unsubscribe failed");
+  }
+
+  return data;
 };

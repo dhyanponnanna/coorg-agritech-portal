@@ -73,3 +73,18 @@ export const searchLocationsInDatabase = async (query) => {
     },
   });
 };
+
+export const getAllLocations = async () => {
+  return prisma.location.findMany({
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      latitude: true,
+      longitude: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+};

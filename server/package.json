@@ -24,6 +24,7 @@
     "node-cron": "^4.6.0",
     "pg": "^8.22.0",
     "prisma": "^7.9.1",
+    "resend": "^6.38.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

@@ -11,6 +11,8 @@ import {
   getLocationByName,
 } from "../repositories/weather.repository.js";
 
+import { sendWeatherAlertEmails } from "./emailSubscription.service.js";
+
 export const generateWeatherAlertsService = async (
   locationId
 ) => {
@@ -94,16 +96,36 @@ export const generateWeatherAlertsService = async (
 
   const createdAlerts = [];
 
-  for (const alert of alerts) {
-    const created = await createWeatherAlert({
-      locationId,
-      ...alert,
-    });
+for (const alert of alerts) {
+  const created = await createWeatherAlert({
+    locationId,
+    ...alert,
+  });
 
-    if (created) {
-      createdAlerts.push(created);
-    }
+  // Send emails only for newly created alerts
+  if (!created) {
+    continue;
   }
+
+  createdAlerts.push(created);
+
+  try {
+    await sendWeatherAlertEmails(
+      {
+        ...created,
+        location: {
+          name: weather.location,
+        },
+      },
+      locationId
+    );
+  } catch (error) {
+    console.error(
+      `Email notification failed for ${created.title}:`,
+      error.message
+    );
+  }
+}
 
   return createdAlerts;
 };
